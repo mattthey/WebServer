@@ -1,0 +1,43 @@
+package server;
+
+import threadDispatcher.ThreadDispatcher;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+public class WebServer {
+    private int port;
+    private ServerSocket serverSocket;
+
+    public WebServer(int serverPort) {
+        port = serverPort;
+    }
+
+    public void createSocket () {
+        try {
+            serverSocket = new ServerSocket(port);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void startServer() {
+        ThreadDispatcher td = ThreadDispatcher.getInstance();
+        Socket client;
+        try {
+            while (true) {
+                System.out.println("> Waiting for a client...");
+                client = serverSocket.accept();
+                System.out.println("> Client " + client.getInetAddress().toString() + " connected");
+                td.Add(new WorkerWithClient(client));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+}
