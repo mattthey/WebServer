@@ -1,13 +1,12 @@
 package fileWorker;
 
+import java.io.File;
+import java.util.LinkedList;
+
 public class Main {
 
     public static void main(String[] args)  {
-        FileWorker fileWorker = new FileWorker(".");
-        fileWorker.setIsRecursive(true);
-        Md5Executor ex = new Md5Executor();
-        fileWorker.execute(ex);
-
-        System.out.println(ex.dirHash);
+        String s = "123\r\n\r\n";
+        System.out.println(s.substring(s.length() - 4).equals("\r\n\r\n"));
     }
 }

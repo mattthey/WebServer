@@ -6,7 +6,8 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-public class ThreadDispatcher {
+public class ThreadDispatcher
+{
 
     private static volatile ThreadDispatcher instance;
     public static LinkedList<Threaded> currentThread;
@@ -14,7 +15,8 @@ public class ThreadDispatcher {
     public static ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(100, 100,
                                           20,TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(300));
 
-    private ThreadDispatcher() {
+    private ThreadDispatcher()
+    {
         currentThread = new LinkedList<>();
         Add(new ThreadMonitor());
     }

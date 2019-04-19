@@ -1,14 +1,17 @@
 package threadDispatcher;
 
-public abstract class Threaded implements Runnable{
+public abstract class Threaded implements Runnable
+{
 
     public long timeStart;
     public long id;
     public abstract void doRun();
 
     @Override
-    public void run(){
-        try{
+    public void run()
+    {
+        try
+        {
             ThreadDispatcher.currentThread.add(this);
             timeStart = System.currentTimeMillis();
             id = Thread.currentThread().getId();
@@ -16,6 +19,7 @@ public abstract class Threaded implements Runnable{
             ThreadDispatcher.currentThread.remove(this);
             ThreadDispatcher.threadPoolExecutor.remove(this);
         } catch (Exception e) {
+            System.out.println(e.toString());
             System.out.println("Error in Threaded");
         }
     }
