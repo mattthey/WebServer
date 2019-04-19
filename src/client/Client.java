@@ -10,6 +10,7 @@ public class Client {
 
     private String ipAddress;
     private int serverPort;
+    private String endOfMessage = "\r\n\r\n";
 
     public Client(String address, int port) {
         ipAddress = address;
@@ -22,7 +23,7 @@ public class Client {
             socket = new Socket(ipAddress, serverPort);
             OutputStream out = socket.getOutputStream();
 
-            out.write((message + "\r\n\r\n").getBytes());
+            out.write((message + endOfMessage).getBytes());
             System.out.println(readResponse(socket));
 
         } catch (IOException e) {
@@ -57,8 +58,8 @@ public class Client {
 
     private boolean check(String s)
     {
-        if (s.length() < 8)
+        if (s.length() < 4)
             return true;
-        return !s.substring(s.length() - 4).equals("\r\n\r\n");
+        return !s.substring(s.length() - 4).equals(endOfMessage);
     }
 }

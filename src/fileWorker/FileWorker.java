@@ -49,7 +49,7 @@ public class FileWorker {
         listFilesForFolder(folder, files, command);
     }
 
-    public void listFilesForFolder(final File folder, ArrayList<File> files, IExecutable command)
+    public synchronized void listFilesForFolder(final File folder, ArrayList<File> files, IExecutable command)
     {
         for (File fileEntry : folder.listFiles()) {
             if (fileEntry.isDirectory() && isRecursive ) {

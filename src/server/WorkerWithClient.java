@@ -49,7 +49,7 @@ public class WorkerWithClient extends Threaded
 
     private void sendResult(String result)
     {
-        result += "\r\n\r\n";
+        result += endOfMessage;
         try
         {
             OutputStream outputStream = myClientSocket.getOutputStream();
@@ -72,6 +72,8 @@ public class WorkerWithClient extends Threaded
             while(check(stringBuilder.toString()))
             {
                 int bytesRead = in.read(messageByte);
+                if (bytesRead == -1)
+                    continue;
                 stringBuilder.append(new String(messageByte, 0, bytesRead));
             }
         } catch (IOException e) {
@@ -82,9 +84,9 @@ public class WorkerWithClient extends Threaded
 
     private boolean check(String s)
     {
-        if (s.length() < 8)
+        if (s.length() < 4)
             return true;
-        return !s.substring(s.length() - 4).equals("\r\n\r\n");
+        return !s.substring(s.length() - 4).equals(endOfMessage);
     }
 
 }
