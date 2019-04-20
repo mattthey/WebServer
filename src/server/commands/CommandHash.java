@@ -1,15 +1,15 @@
 package server.commands;
 
-import fileWorker.FileWorker;
 import fileWorker.Md5Executor;
+
+import java.io.File;
 
 public class CommandHash implements ICommand
 {
     @Override
-    public String getResult(String[] param) {
-        FileWorker fileWorker = new FileWorker("./src/tests");
+    public String getResult(String[] param)
+    {
         Md5Executor md = new Md5Executor();
-        fileWorker.execute(md);
-        return md.dirHash;
+        return md.process(new File(param[1]));
     }
 }

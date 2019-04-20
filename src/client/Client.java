@@ -5,34 +5,49 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.Scanner;
 
 public class Client {
 
     private String ipAddress;
     private int serverPort;
     private String endOfMessage = "\r\n\r\n";
+    Socket socket;
 
     public Client(String address, int port) {
         ipAddress = address;
         serverPort = port;
     }
-    public void createSocket(String message) {
-
-        Socket socket;
+    public void createSocket() {
         try {
             socket = new Socket(ipAddress, serverPort);
-            OutputStream out = socket.getOutputStream();
-
-            out.write((message + endOfMessage).getBytes());
-            System.out.println(readResponse(socket));
-
+            while (true)
+            {
+                System.out.println(readResponse());
+                sendMessage();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
 
-    private String readResponse(Socket socket)
+    private void sendMessage()
+    {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Введите запрос: ");
+        String request = sc.nextLine();
+        try
+        {
+            OutputStream out = socket.getOutputStream();
+            out.write((request + endOfMessage).getBytes());
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+
+    }
+
+    private String readResponse()
     {
         byte[] messageByte = new byte[1024];
         StringBuilder stringBuilder = new StringBuilder();
@@ -49,7 +64,6 @@ public class Client {
                     continue;
                 stringBuilder.append(new String(messageByte, 0, bytesRead));
             }
-            inputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

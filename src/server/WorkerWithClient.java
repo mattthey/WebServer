@@ -33,6 +33,7 @@ public class WorkerWithClient extends Threaded
     @Override
     public void doRun()
     {
+        sendHello();
         while (true)
         {
             String[] command = readCommand();
@@ -41,7 +42,7 @@ public class WorkerWithClient extends Threaded
             {
                 result = commands.get(command[0]).getResult(command);
             } else {
-                result = "Sorry, we havn't this command";
+                result = "Sorry, we havn't this command " + command[0];
             }
             sendResult(result);
         }
@@ -87,6 +88,15 @@ public class WorkerWithClient extends Threaded
         if (s.length() < 4)
             return true;
         return !s.substring(s.length() - 4).equals(endOfMessage);
+    }
+
+    private void sendHello()
+    {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("we have next command: \n");
+        for (String com : commands.keySet())
+            stringBuilder.append(com).append("\n");
+        sendResult(stringBuilder.toString());
     }
 
 }

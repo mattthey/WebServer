@@ -27,9 +27,7 @@ public class WebServer {
         Socket client;
         try {
             while (true) {
-//                System.out.println("> Waiting for a client...");
                 client = serverSocket.accept();
-//                System.out.println("> Client " + client.getInetAddress().toString() + " connected");
                 td.Add(new WorkerWithClient(client));
             }
         } catch (IOException e) {

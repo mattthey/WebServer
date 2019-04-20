@@ -1,7 +1,6 @@
 package fileWorker;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class FileWorker {
@@ -35,7 +34,7 @@ public class FileWorker {
                 continue;
             }
             if (f.isFile())
-                stringBuilder.append(f.getName()).append("\n");
+                stringBuilder.append(folder.getPath()).append("/").append(f.getName()).append("\n");
         }
 
         return stringBuilder.toString();
@@ -45,11 +44,11 @@ public class FileWorker {
     public void execute(IExecutable command)
     {
         File folder = new File(dirPath);
-        ArrayList<File> files = new ArrayList<File>();
+        LinkedList<File> files = new LinkedList <File>();
         listFilesForFolder(folder, files, command);
     }
 
-    public synchronized void listFilesForFolder(final File folder, ArrayList<File> files, IExecutable command)
+    public synchronized void listFilesForFolder(final File folder, LinkedList<File> files, IExecutable command)
     {
         for (File fileEntry : folder.listFiles()) {
             if (fileEntry.isDirectory() && isRecursive ) {

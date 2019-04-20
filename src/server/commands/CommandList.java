@@ -7,7 +7,8 @@ public class CommandList implements ICommand
     @Override
     public String getResult(String[] param)
     {
-        FileWorker fileWorker = new FileWorker("./src/fileWorker");
+        FileWorker fileWorker = new FileWorker("./tests");
+        fileWorker.setIsRecursive(true);
         return fileWorker.getFiles();
     }
 }
