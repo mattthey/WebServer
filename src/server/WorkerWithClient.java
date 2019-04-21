@@ -3,20 +3,21 @@ package server;
 import server.commands.CommandHash;
 import server.commands.CommandList;
 import server.commands.ICommand;
+import sun.misc.Queue;
 import threadDispatcher.Threaded;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.HashMap;
+
 
 public class WorkerWithClient extends Threaded
 {
     private Socket myClientSocket;
     private String endOfMessage = "\r\n\r\n";
+    private volatile Queue<String[]> tasks;
+
     private HashMap<String, ICommand> commands = new HashMap<String, ICommand>()
     {
         {
@@ -28,23 +29,38 @@ public class WorkerWithClient extends Threaded
     public WorkerWithClient(Socket s)
     {
         myClientSocket = s;
+        tasks = new Queue<String[]>();
     }
 
     @Override
     public void doRun()
     {
+        // поток демон
+        Thread t = new Thread(new ListenerSocket(myClientSocket, tasks));
+        t.setDaemon(true);
+        t.start();
+
         sendHello();
-        while (true)
+        String result;
+        String[] task = null;
+        while (!myClientSocket.isClosed())
         {
-            String[] command = readCommand();
-            String result;
-            if (commands.containsKey(command[0]))
+            if (!tasks.isEmpty())
             {
-                result = commands.get(command[0]).getResult(command);
-            } else {
-                result = "Sorry, we havn't this command " + command[0];
+                try {
+                    task = tasks.dequeue();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (task != null && commands.containsKey(task[0]))
+                {
+                    result = commands.get(task[0]).getResult(task);
+                } else {
+                    task = (task == null) ? new String[] {""} : task;
+                    result = "Sorry, we haven't this command " + task[0];
+                }
+                sendResult(result);
             }
-            sendResult(result);
         }
     }
 
@@ -56,38 +72,8 @@ public class WorkerWithClient extends Threaded
             OutputStream outputStream = myClientSocket.getOutputStream();
             outputStream.write(result.getBytes());
         } catch (IOException e) {
-            e.printStackTrace();
+            return;
         }
-    }
-
-    private String[] readCommand()
-    {
-        byte[] messageByte = new byte[1024];
-        StringBuilder stringBuilder = new StringBuilder();
-
-        try
-        {
-            InputStream inputStream = myClientSocket.getInputStream();
-            DataInputStream in = new DataInputStream(inputStream);
-
-            while(check(stringBuilder.toString()))
-            {
-                int bytesRead = in.read(messageByte);
-                if (bytesRead == -1)
-                    continue;
-                stringBuilder.append(new String(messageByte, 0, bytesRead));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return stringBuilder.substring(0, stringBuilder.length() - 4).split("----");
-    }
-
-    private boolean check(String s)
-    {
-        if (s.length() < 4)
-            return true;
-        return !s.substring(s.length() - 4).equals(endOfMessage);
     }
 
     private void sendHello()
@@ -95,7 +81,10 @@ public class WorkerWithClient extends Threaded
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("we have next command: \n");
         for (String com : commands.keySet())
-            stringBuilder.append(com).append("\n");
+        {
+            stringBuilder.append("\t\t").append(com).append("\n");
+            stringBuilder.append(commands.get(com).getExampleCall()).append("\n");
+        }
         sendResult(stringBuilder.toString());
     }
 

@@ -6,11 +6,11 @@ import java.util.LinkedList;
 
 public class ThreadMonitor extends Threaded
 {
-    public static LinkedList<Threaded> activeTasks = new LinkedList<>();
+    private static LinkedList<Threaded> activeTasks = new LinkedList<>();
 
     private synchronized void updateActiveTasks()
     {
-        activeTasks = (LinkedList<Threaded>) ThreadDispatcher.currentThread.clone();
+        activeTasks =  (LinkedList) ThreadDispatcher.currentThread.clone();
     }
 
     @Override
@@ -20,6 +20,7 @@ public class ThreadMonitor extends Threaded
         {
             try { Thread.sleep(200); } catch (Exception e) { System.out.println("Error in ThreadMonitor"); }
             updateActiveTasks();
+            // тут просто записываю лог событий
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.append("\n\n");
             for (Threaded t : activeTasks)

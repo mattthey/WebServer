@@ -26,14 +26,13 @@ public class WebServer {
         ThreadDispatcher td = ThreadDispatcher.getInstance();
         Socket client;
         try {
-            while (true) {
+            while (true)
+            {
                 client = serverSocket.accept();
                 td.Add(new WorkerWithClient(client));
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
 }

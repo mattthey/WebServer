@@ -12,13 +12,14 @@ public class ThreadDispatcher
     private static volatile ThreadDispatcher instance;
     public static LinkedList<Threaded> currentThread;
 
-    public static ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(100, 100,
+    protected static ThreadPoolExecutor threadPoolExecutor = new ThreadPoolExecutor(100, 100,
                                           20,TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(300));
 
     private ThreadDispatcher()
     {
         currentThread = new LinkedList<>();
-        Add(new ThreadMonitor());
+        Threaded t = new ThreadMonitor();
+        Add(t);
     }
 
     public static ThreadDispatcher getInstance(){

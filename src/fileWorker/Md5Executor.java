@@ -31,28 +31,25 @@ public class Md5Executor implements IExecutable {
     public String process(File f)
     {
         StringBuilder hash = new StringBuilder();
+        byte[] bytes;
         try
         {
-            byte[] bytes = createChecksum(f.getPath());
-
-            for (byte b: bytes)
-            {
-                hash.append(Integer.toString((b & 0xff) + 0x100, 16).substring(1));
-            }
-
-            if (dirHash.equals("")){
-                dirHash = hash.toString();
-            } else
-                {
-                    StringBuilder tempHash = new StringBuilder();
-                    for (int i=0; i<dirHash.length(); i++)
-                    {
-                        tempHash.append(dirHash.charAt(i) ^ hash.charAt(i));
-                    }
-                }
+            bytes = createChecksum(f.getPath());
         }
-        catch (Exception e){
-            e.printStackTrace();
+        catch (Exception e)
+        {
+            return "file not found";
+        }
+        for (byte b: bytes)
+            hash.append(Integer.toString((b & 0xff) + 0x100, 16).substring(1));
+
+        if (dirHash.equals(""))
+            dirHash = hash.toString();
+        else
+        {
+            StringBuilder tempHash = new StringBuilder();
+            for (int i=0; i<dirHash.length(); i++)
+                tempHash.append(dirHash.charAt(i) ^ hash.charAt(i));
         }
         return hash.toString();
     }

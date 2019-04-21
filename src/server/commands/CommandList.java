@@ -11,4 +11,10 @@ public class CommandList implements ICommand
         fileWorker.setIsRecursive(true);
         return fileWorker.getFiles();
     }
+
+    @Override
+    public String getExampleCall()
+    {
+        return "This method displays a list of files where the fileWorker points\nCommand: list";
+    }
 }

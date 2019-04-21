@@ -12,24 +12,49 @@ public class Client {
     private String ipAddress;
     private int serverPort;
     private String endOfMessage = "\r\n\r\n";
-    Socket socket;
+    private Socket socket;
+    private boolean sessionUser;
 
-    public Client(String address, int port) {
+    public Client(String address, int port, boolean sessionUser) {
         ipAddress = address;
         serverPort = port;
+        this.sessionUser = sessionUser;
     }
+
     public void createSocket() {
         try {
             socket = new Socket(ipAddress, serverPort);
-            while (true)
+            if (sessionUser)
             {
-                System.out.println(readResponse());
-                sendMessage();
+                while (!socket.isClosed())
+                {
+                    System.out.println(readResponse());
+                    sendMessage();
+                }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
         }
+    }
 
+    public void closeConnection()
+    {
+        try {
+            socket.close();
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public void sendMessage(String message)
+    {
+        try
+        {
+            OutputStream out = socket.getOutputStream();
+            out.write((message + endOfMessage).getBytes());
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     private void sendMessage()
@@ -47,7 +72,7 @@ public class Client {
 
     }
 
-    private String readResponse()
+    public String readResponse()
     {
         byte[] messageByte = new byte[1024];
         StringBuilder stringBuilder = new StringBuilder();

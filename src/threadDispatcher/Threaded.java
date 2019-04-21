@@ -3,8 +3,9 @@ package threadDispatcher;
 public abstract class Threaded implements Runnable
 {
 
-    public long timeStart;
-    public long id;
+    private long timeStart;
+    private long id;
+
     public abstract void doRun();
 
     @Override
@@ -21,6 +22,7 @@ public abstract class Threaded implements Runnable
         } catch (Exception e) {
             System.out.println(e.toString());
             System.out.println("Error in Threaded");
+            e.printStackTrace();
         }
     }
 
