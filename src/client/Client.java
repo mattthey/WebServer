@@ -4,7 +4,9 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.util.Scanner;
 
 public class Client {
@@ -26,10 +28,18 @@ public class Client {
             socket = new Socket(ipAddress, serverPort);
             if (sessionUser)
             {
+                Scanner sc = new Scanner(System.in);
                 while (!socket.isClosed())
                 {
                     System.out.println(readResponse());
-                    sendMessage();
+                    System.out.print("Введите запрос: ");
+                    String request = sc.nextLine();
+                    if (request.equals("close()"))
+                    {
+                        socket.close();
+                        break;
+                    }
+                    sendMessage(request);
                 }
             }
         } catch (IOException e) {
@@ -55,21 +65,6 @@ public class Client {
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
-    }
-
-    private void sendMessage()
-    {
-        Scanner sc = new Scanner(System.in);
-        System.out.println("Введите запрос: ");
-        String request = sc.nextLine();
-        try
-        {
-            OutputStream out = socket.getOutputStream();
-            out.write((request + endOfMessage).getBytes());
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
-
     }
 
     public String readResponse()
