@@ -3,12 +3,12 @@ package server;
 import server.commands.CommandHash;
 import server.commands.CommandList;
 import server.commands.ICommand;
-import sun.misc.Queue;
 import threadDispatcher.Threaded;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.ArrayDeque;
 import java.util.HashMap;
 
 
@@ -16,7 +16,7 @@ public class WorkerWithClient extends Threaded
 {
     private Socket myClientSocket;
     private String endOfMessage = "\r\n\r\n";
-    private volatile Queue<String[]> tasks;
+    private volatile ArrayDeque<String[]> tasks;
 
     private HashMap<String, ICommand> commands = new HashMap<String, ICommand>()
     {
@@ -29,7 +29,7 @@ public class WorkerWithClient extends Threaded
     public WorkerWithClient(Socket s)
     {
         myClientSocket = s;
-        tasks = new Queue<String[]>();
+        tasks = new ArrayDeque<String[]>();
     }
 
     @Override
@@ -47,11 +47,7 @@ public class WorkerWithClient extends Threaded
         {
             if (!tasks.isEmpty())
             {
-                try {
-                    task = tasks.dequeue();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                task = tasks.getFirst();
                 if (task != null && commands.containsKey(task[0]))
                 {
                     result = commands.get(task[0]).getResult(task);

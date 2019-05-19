@@ -1,6 +1,11 @@
 package fileWorker;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.LinkedList;
 
 public class FileWorker {
@@ -58,6 +63,21 @@ public class FileWorker {
             if (fileEntry.isFile())
                 command.process(fileEntry);
         }
+    }
+
+    public static byte[] getBytesFromFile () throws IOException
+    {
+        Path path = Paths.get("myfile.bin");
+        byte[] data = Files.readAllBytes(path);
+        return data;
+    }
+
+    public static void write (byte[] bytes) throws IOException {
+        try {
+            FileOutputStream fos = new FileOutputStream("myfile.bin");
+            fos.write(bytes);
+            fos.close();
+        } catch (IOException e) {}
     }
 
 }

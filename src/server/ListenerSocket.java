@@ -1,7 +1,7 @@
 package server;
 
 
-import sun.misc.Queue;
+import java.util.ArrayDeque;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -14,9 +14,9 @@ public class ListenerSocket implements Runnable
     private String endOfMessage = "\r\n\r\n";
     private Socket myClientSocket;
     private InputStream myClientInputStream;
-    private volatile Queue<String[]> tasks;
+    private volatile ArrayDeque<String[]> tasks;
 
-    protected ListenerSocket(Socket socket, Queue<String[]> tasks)
+    protected ListenerSocket(Socket socket, ArrayDeque<String[]> tasks)
     {
         myClientSocket = socket;
         try {
@@ -34,7 +34,7 @@ public class ListenerSocket implements Runnable
         while (true)
         {
             command = readCommand();
-            tasks.enqueue(command);
+            tasks.add(command);
         }
     }
 
