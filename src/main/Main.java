@@ -16,12 +16,11 @@ public class Main
         byte[] ser = serializator.serialaize(testClass);
         FileWorker.write(ser);
         byte[] get = FileWorker.getBytesFromFile();
-        MyClass1 a = serializator.deserialize(get);
+        MyClass1 deserializeMyClass1 = serializator.deserialize(get);
 
-//        System.out.println("arrayField          " + a.arrayField[0]);
-        System.out.println("doubleField         " + a.getDoubleField());
-        System.out.println("strField            " + a.strField);
-        System.out.println("subMyClass.intField " + a.subMyClass.intField);
+        System.out.println("doubleField         " + deserializeMyClass1.getDoubleField());
+        System.out.println("strField            " + deserializeMyClass1.strField);
+        System.out.println("subMyClass.intField " + deserializeMyClass1.subMyClass.intField);
     }
 
     private static void test1()
